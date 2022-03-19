@@ -1,9 +1,12 @@
+import React, { useState } from 'react';
 import styled from '@emotion/styled';
+import { ThemeProvider } from '@emotion/react';
+import dayjs from 'dayjs';
 import { ReactComponent as DaycloudyIcon } from './images/day-cloudy.svg';
 import { ReactComponent as AirFlowIcon } from './images/airFlow.svg';
 import { ReactComponent as RainIcon } from './images/rain.svg';
 import { ReactComponent as RefreshIcon } from './images/refresh.svg';
-import { ThemeProvider } from '@emotion/react';
+
 const theme = {
   light: {
     backgroundColor: '#ededed',
@@ -37,6 +40,7 @@ const WeatherCard = styled.div`
   background-color: ${({ theme }) => theme.foregroundColor};
   box-sizing: border-box;
   padding: 30px 15px;
+  border-radius: 5px;
 `;
 const Location = styled.div`
   font-size: 28px;
@@ -110,30 +114,43 @@ const Refresh = styled.div`
   }
 `;
 function App() {
+  const [currentTheme, setCurrentTheme] = useState('light');
+  const [currentWeather, setCurrentWeather] = useState({
+    locationName: '臺北市',
+    description: '多雲時晴',
+    windSpeed: 1.1,
+    temperature: 22.9,
+    rainPossibility: 48.3,
+    observationTime: '2020-12-12 22:10:00',
+  });
   return (
-    <ThemeProvider theme={theme.dark}>
+    <ThemeProvider theme={theme[currentTheme]}>
       <Container>
         <WeatherCard>
-          <Location>台北市</Location>
-          <Description>多雲時晴</Description>
+          <Location>{currentWeather.locationName}</Location>
+          <Description>{currentWeather.description}</Description>
           <CurrentWeather>
             <Temperature>
-              23 <Celsius>°C</Celsius>
+              {Math.round(currentWeather.temperature)} <Celsius>°C</Celsius>
             </Temperature>
             <Daycloudy />
           </CurrentWeather>
           <AirFlow>
-            <AirFlowIcon />
-            23 m/h
+            <AirFlowIcon /> {currentWeather.windSpeed} m/h
           </AirFlow >
           <Rain>
-            <RainIcon />
-            48%
+            <RainIcon /> {currentWeather.rainPossibility} %
           </Rain>
-            <Refresh>
-              最後觀測時間
-              <RefreshIcon />
-            </Refresh>
+          <Refresh>
+            最後觀測時間: {new Intl.DateTimeFormat('zh-Tw', {
+              year: 'numeric',
+              month: 'numeric',
+              day: 'numeric',
+              hour: 'numeric',
+              minute: 'numeric',
+            }).format(new Date(dayjs(currentWeather.observationTime)))}
+            <RefreshIcon />
+          </Refresh>
         </WeatherCard>
       </Container>
     </ThemeProvider>
