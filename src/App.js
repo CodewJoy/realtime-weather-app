@@ -128,22 +128,28 @@ function App() {
   // console.log('invoke function component'); // 元件一開始加入 console.log
   const AUTHORIZATION_KEY = 'CWB-E7CA1BB3-7E06-4946-8E26-963BFCB5CDDF';
   const LOCATION_NAME = '臺北';
+  const LOCATION_NAME_FORECAST = '臺北市';
   const [currentTheme, setCurrentTheme] = useState('light');
-  const [currentWeather, setCurrentWeather] = useState({
-    locationName: '臺北市',
-    description: '多雲時晴',
-    windSpeed: 1.1,
-    temperature: 22.9,
-    rainPossibility: 48.3,
-    observationTime: '2020-12-12 22:10:00',
+  const [weatherElement, setWeatherElement] = useState({
+    locationName: '',
+    description: '',
+    windSpeed: 0,
+    temperature: 0,
+    rainPossibility: 0,
+    weatherCode: 0,
+    comfortability: '',
+    observationTime: new Date(),
     isLoading: true,
   });
-  const { locationName, description, temperature, windSpeed, rainPossibility, isLoading, observationTime } = currentWeather ;
+  const { 
+    locationName, description, temperature, windSpeed, rainPossibility, isLoading, observationTime, comfortability, weatherCode,
+  } = weatherElement ;
 
-  const fetchCurrentWeather = () => {
-    setCurrentWeather({ ...currentWeather, 
+  const fetchweatherElement = () => {
+    setWeatherElement((prevState) => ({
+      ...prevState,
       isLoading: true,
-    });
+    }));
     fetch(`https://opendata.cwb.gov.tw/api/v1/rest/datastore/O-A0003-001?Authorization=${AUTHORIZATION_KEY}&locationName=${LOCATION_NAME}`)
     .then(response => response.json())
     .then(data => { 
@@ -157,17 +163,53 @@ function App() {
         }, 
         {}
       );
-      setCurrentWeather({ ...currentWeather, 
+      console.log(data);
+      setWeatherElement((prevState) => ({ 
+        ...prevState, 
+        observationTime: locationData.time.obsTime,
+        locationName: locationData.locationName,
         windSpeed: weatherElements.WDSD, 
         temperature: weatherElements.TEMP,
         isLoading: false,
-      });
+      }));
     });
+  };
+
+  const fetchWeatherForecast = () => {
+    fetch(`https://opendata.cwb.gov.tw/api/v1/rest/datastore/F-C0032-001?Authorization=${AUTHORIZATION_KEY}&locationName=${LOCATION_NAME_FORECAST}`)
+    .then(response => response.json())
+    .then(data => { 
+      console.log(data);
+      const locationData = data.records.location[0];
+      const weatherElements = locationData.weatherElement.reduce(
+        (preValue, currentValue) => {
+          if (['Wx', 'PoP', 'CI'].includes(currentValue.elementName)) {
+            /** get nearest 12 hour data here */
+            preValue[currentValue.elementName] = currentValue.time[0].parameter;
+          }
+          return preValue;
+        }, 
+        {}
+      );
+      console.log('weatherElements', weatherElements)
+      setWeatherElement((prevState) => ({ 
+        ...prevState,
+        description: weatherElements.Wx.parameterName, 
+        weatherCode: weatherElements.Wx.parameterValue,
+        rainPossibility: weatherElements.PoP.parameterName,
+        comfortability: weatherElements.CI.parameterName,
+      }));
+    });
+  };
+
+  const fetchWeatherData = () => {
+    fetchweatherElement();
+    fetchWeatherForecast();
   };
 
   useEffect(() => {
     // console.log('execute function in useEffect');
-    fetchCurrentWeather();
+    fetchWeatherData();
   }, []);
 
   return (
@@ -176,7 +218,7 @@ function App() {
       <Container>
         <WeatherCard>
           <Location>{locationName}</Location>
-          <Description>{description}</Description>
+          <Description>{description} {comfortability}</Description>
           <CurrentWeather>
             <Temperature>
               {Math.round(temperature)} <Celsius>°C</Celsius>
@@ -189,7 +231,7 @@ function App() {
           <Rain>
             <RainIcon /> {rainPossibility} %
           </Rain>
-          <Refresh onClick={fetchCurrentWeather} isLoading={isLoading}>
+          <Refresh onClick={fetchWeatherData} isLoading={isLoading}>
             最後觀測時間: {new Intl.DateTimeFormat('zh-Tw', {
               month: 'numeric',
               day: 'numeric',
