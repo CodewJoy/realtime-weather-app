@@ -145,66 +145,70 @@ function App() {
     locationName, description, temperature, windSpeed, rainPossibility, isLoading, observationTime, comfortability, weatherCode,
   } = weatherElement ;
 
-  const fetchweatherElement = () => {
+  const fetchCurrentWeather = () => {
+    // 加上 return 直接把 fetch API 回傳的 Promise 再回傳出去
+    return fetch(`https://opendata.cwb.gov.tw/api/v1/rest/datastore/O-A0003-001?Authorization=${AUTHORIZATION_KEY}&locationName=${LOCATION_NAME}`)
+      .then(response => response.json())
+      .then(data => { 
+        const locationData = data.records.location[0];
+        const weatherElements = locationData.weatherElement.reduce(
+          (preValue, currentValue) => {
+            if (['WDSD', 'TEMP'].includes(currentValue.elementName)) {
+              preValue[currentValue.elementName] = currentValue.elementValue;
+            }
+            return preValue;
+          }, 
+          {}
+        );
+        // console.log(data);
+        return {
+          observationTime: locationData.time.obsTime,
+          locationName: locationData.locationName,
+          windSpeed: weatherElements.WDSD, 
+          temperature: weatherElements.TEMP,
+        };
+      });
+  };
+
+  const fetchWeatherForecast = () => {
+    return fetch(`https://opendata.cwb.gov.tw/api/v1/rest/datastore/F-C0032-001?Authorization=${AUTHORIZATION_KEY}&locationName=${LOCATION_NAME_FORECAST}`)
+      .then(response => response.json())
+      .then(data => { 
+        // console.log(data);
+        const locationData = data.records.location[0];
+        const weatherElements = locationData.weatherElement.reduce(
+          (preValue, currentValue) => {
+            if (['Wx', 'PoP', 'CI'].includes(currentValue.elementName)) {
+              /** get nearest 12 hour data here */
+              preValue[currentValue.elementName] = currentValue.time[0].parameter;
+            }
+            return preValue;
+          }, 
+          {}
+        );
+        // console.log('weatherElements', weatherElements)
+        return {
+          description: weatherElements.Wx.parameterName, 
+          weatherCode: weatherElements.Wx.parameterValue,
+          rainPossibility: weatherElements.PoP.parameterName,
+          comfortability: weatherElements.CI.parameterName,
+        };
+      });
+  };
+
+  const fetchWeatherData = async () => {
     setWeatherElement((prevState) => ({
       ...prevState,
       isLoading: true,
     }));
-    fetch(`https://opendata.cwb.gov.tw/api/v1/rest/datastore/O-A0003-001?Authorization=${AUTHORIZATION_KEY}&locationName=${LOCATION_NAME}`)
-    .then(response => response.json())
-    .then(data => { 
-      const locationData = data.records.location[0];
-      const weatherElements = locationData.weatherElement.reduce(
-        (preValue, currentValue) => {
-          if (['WDSD', 'TEMP'].includes(currentValue.elementName)) {
-            preValue[currentValue.elementName] = currentValue.elementValue;
-          }
-          return preValue;
-        }, 
-        {}
-      );
-      console.log(data);
-      setWeatherElement((prevState) => ({ 
-        ...prevState, 
-        observationTime: locationData.time.obsTime,
-        locationName: locationData.locationName,
-        windSpeed: weatherElements.WDSD, 
-        temperature: weatherElements.TEMP,
-        isLoading: false,
-      }));
+    const [ currentWeather, weatherForecast ] = await Promise.all([fetchCurrentWeather(), fetchWeatherForecast()]);
+    // console.log('currentWeather', currentWeather)
+    // console.log('weatherForecast', weatherForecast)
+    setWeatherElement({
+      ...currentWeather,
+      ...weatherForecast,
+      isLoading: false,
     });
-  };
-
-  const fetchWeatherForecast = () => {
-    fetch(`https://opendata.cwb.gov.tw/api/v1/rest/datastore/F-C0032-001?Authorization=${AUTHORIZATION_KEY}&locationName=${LOCATION_NAME_FORECAST}`)
-    .then(response => response.json())
-    .then(data => { 
-      console.log(data);
-      const locationData = data.records.location[0];
-      const weatherElements = locationData.weatherElement.reduce(
-        (preValue, currentValue) => {
-          if (['Wx', 'PoP', 'CI'].includes(currentValue.elementName)) {
-            /** get nearest 12 hour data here */
-            preValue[currentValue.elementName] = currentValue.time[0].parameter;
-          }
-          return preValue;
-        }, 
-        {}
-      );
-      console.log('weatherElements', weatherElements)
-      setWeatherElement((prevState) => ({ 
-        ...prevState,
-        description: weatherElements.Wx.parameterName, 
-        weatherCode: weatherElements.Wx.parameterValue,
-        rainPossibility: weatherElements.PoP.parameterName,
-        comfortability: weatherElements.CI.parameterName,
-      }));
-    });
-  };
-
-  const fetchWeatherData = () => {
-    fetchweatherElement();
-    fetchWeatherForecast();
   };
 
   useEffect(() => {
