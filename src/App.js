@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import styled from '@emotion/styled';
 import { ThemeProvider } from '@emotion/react';
 import dayjs from 'dayjs';
@@ -196,25 +196,27 @@ function App() {
       });
   };
 
-  const fetchWeatherData = async () => {
+  /** add useCallback to avoid every re-render redefine etchWeatherData */
+  const fetchWeatherData = useCallback(async () => {
     setWeatherElement((prevState) => ({
       ...prevState,
       isLoading: true,
     }));
-    const [ currentWeather, weatherForecast ] = await Promise.all([fetchCurrentWeather(), fetchWeatherForecast()]);
-    // console.log('currentWeather', currentWeather)
-    // console.log('weatherForecast', weatherForecast)
+    const [ currentWeather, weatherForecast ] = await Promise.all([
+      fetchCurrentWeather(),
+      fetchWeatherForecast(),
+    ]);
     setWeatherElement({
       ...currentWeather,
       ...weatherForecast,
       isLoading: false,
     });
-  };
+  }, []);
 
   useEffect(() => {
     // console.log('execute function in useEffect');
     fetchWeatherData();
-  }, []);
+  }, [fetchWeatherData]);
 
   return (
     <ThemeProvider theme={theme[currentTheme]}>
