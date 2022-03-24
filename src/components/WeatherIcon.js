@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import styled from '@emotion/styled';
 import { ReactComponent as DayThunderstorm } from './../images/day-thunderstorm.svg';
 import { ReactComponent as DayClear } from './../images/day-clear.svg';
@@ -58,18 +58,19 @@ const weatherIcons = {
   },
 };
 
-const weatherCode = 1;
-const weatherCodeToType = (weatherCode) => {
-    const [weatherType, weatherCodes] = Object.entries(weatherTypes)
-        .find(([weatherType, weatherCodes]) => weatherCodes.includes(weatherCode)) || [];
-    return weatherType;
-};
-console.log(weatherCodeToType(weatherCode));
-
-const WeatherIcon = () => {
+const WeatherIcon = ({moment, weatherCode}) => {
+    const weatherCodeToType = (weatherCode) => {
+        const [weatherType, weatherCodes] = Object.entries(weatherTypes)
+            .find(([weatherType, weatherCodes]) => weatherCodes.includes(Number(weatherCode))) || [];
+        return weatherType;
+    };
+    /** execute weatherCodeToType only when weatherCode updates */
+    const weatherType = useMemo(() => weatherCodeToType(weatherCode)
+    ,[weatherCode]);
+    const weatherIcon = weatherIcons[moment][weatherType];
     return (
         <IconContainer>
-            <DayCloudy />
+            {weatherIcon}
         </IconContainer>
     );
 }

@@ -140,7 +140,7 @@ function App() {
   const { 
     locationName, description, temperature, windSpeed, rainPossibility, isLoading, observationTime, comfortability, weatherCode,
   } = weatherElement ;
-
+  
   const fetchCurrentWeather = () => {
     // 加上 return 直接把 fetch API 回傳的 Promise 再回傳出去
     return fetch(`https://opendata.cwb.gov.tw/api/v1/rest/datastore/O-A0003-001?Authorization=${AUTHORIZATION_KEY}&locationName=${LOCATION_NAME}`)
@@ -225,7 +225,7 @@ function App() {
             <Temperature>
               {Math.round(temperature)} <Celsius>°C</Celsius>
             </Temperature>
-            <WeatherIcon />
+            <WeatherIcon moment="night" weatherCode={weatherCode} />
           </CurrentWeather>
           <AirFlow>
             <AirFlowIcon /> {windSpeed} m/h
