@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import styled from '@emotion/styled';
 import { ThemeProvider } from '@emotion/react';
 import dayjs from 'dayjs';
-import { ReactComponent as DaycloudyIcon } from './images/day-cloudy.svg';
+import WeatherIcon from './components/WeatherIcon';
 import { ReactComponent as AirFlowIcon } from './images/airFlow.svg';
 import { ReactComponent as RainIcon } from './images/rain.svg';
 import { ReactComponent as RefreshIcon } from './images/refresh.svg';
@@ -65,9 +65,6 @@ const Temperature = styled.div`
   font-weight: 300;
   display: flex;
 `;
-const Daycloudy = styled(DaycloudyIcon)`
-  flex-basis: 30%
-`;
 const Celsius = styled.div`
   font-weight: normal;
   font-size: 42px;
@@ -92,7 +89,6 @@ const Rain = styled.div`
   font-size: 16x;
   font-weight: 300;
   color: ${({ theme }) => theme.textColor};
-
   svg {
     width: 25px;
     height: auto;
@@ -229,7 +225,7 @@ function App() {
             <Temperature>
               {Math.round(temperature)} <Celsius>°C</Celsius>
             </Temperature>
-            <Daycloudy />
+            <WeatherIcon />
           </CurrentWeather>
           <AirFlow>
             <AirFlowIcon /> {windSpeed} m/h
