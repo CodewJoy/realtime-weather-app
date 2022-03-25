@@ -1,7 +1,8 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import styled from '@emotion/styled';
 import { ThemeProvider } from '@emotion/react';
 import dayjs from 'dayjs';
+import { getMoment } from './utils/helpers.js'
 import WeatherIcon from './components/WeatherIcon';
 import { ReactComponent as AirFlowIcon } from './images/airFlow.svg';
 import { ReactComponent as RainIcon } from './images/rain.svg';
@@ -120,6 +121,7 @@ const Refresh = styled.div`
     }
   }
 `;
+
 function App() {
   // console.log('invoke function component'); // 元件一開始加入 console.log
   const AUTHORIZATION_KEY = 'CWB-E7CA1BB3-7E06-4946-8E26-963BFCB5CDDF';
@@ -140,7 +142,14 @@ function App() {
   const { 
     locationName, description, temperature, windSpeed, rainPossibility, isLoading, observationTime, comfortability, weatherCode,
   } = weatherElement ;
-  
+
+  // TODO: 等使用者可以修改地區時要修改裡面的參數
+  const moment = useMemo(() => getMoment(LOCATION_NAME_FORECAST),[]);
+
+  useEffect(() => {
+    setCurrentTheme(moment === 'day' ? 'light' : 'dark');
+  }, [moment]);
+
   const fetchCurrentWeather = () => {
     // 加上 return 直接把 fetch API 回傳的 Promise 再回傳出去
     return fetch(`https://opendata.cwb.gov.tw/api/v1/rest/datastore/O-A0003-001?Authorization=${AUTHORIZATION_KEY}&locationName=${LOCATION_NAME}`)
@@ -214,6 +223,11 @@ function App() {
     fetchWeatherData();
   }, [fetchWeatherData]);
 
+  useEffect(() => {
+    // console.log('execute function in useEffect');
+    fetchWeatherData();
+  }, [fetchWeatherData]);
+
   return (
     <ThemeProvider theme={theme[currentTheme]}>
       {/* {console.log('render')} */}
@@ -225,7 +239,7 @@ function App() {
             <Temperature>
               {Math.round(temperature)} <Celsius>°C</Celsius>
             </Temperature>
-            <WeatherIcon moment="night" weatherCode={weatherCode} />
+            <WeatherIcon moment={moment} weatherCode={weatherCode} />
           </CurrentWeather>
           <AirFlow>
             <AirFlowIcon /> {windSpeed} m/h

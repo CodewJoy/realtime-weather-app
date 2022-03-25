@@ -58,12 +58,13 @@ const weatherIcons = {
   },
 };
 
+const weatherCodeToType = (weatherCode) => {
+    const [weatherType, weatherCodes] = Object.entries(weatherTypes)
+        .find(([weatherType, weatherCodes]) => weatherCodes.includes(Number(weatherCode))) || [];
+    return weatherType;
+};
+
 const WeatherIcon = ({moment, weatherCode}) => {
-    const weatherCodeToType = (weatherCode) => {
-        const [weatherType, weatherCodes] = Object.entries(weatherTypes)
-            .find(([weatherType, weatherCodes]) => weatherCodes.includes(Number(weatherCode))) || [];
-        return weatherType;
-    };
     /** execute weatherCodeToType only when weatherCode updates */
     const weatherType = useMemo(() => weatherCodeToType(weatherCode)
     ,[weatherCode]);
