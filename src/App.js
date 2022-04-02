@@ -1,7 +1,8 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import styled from '@emotion/styled';
 import { ThemeProvider } from '@emotion/react';
 import { getMoment } from './utils/helpers.js'
+import useWeatherAPI from './hooks/useWeatherAPI';
 import WeatherCard from './views/WeatherCard.js';
 
 const theme = {
@@ -37,17 +38,7 @@ function App() {
   const LOCATION_NAME = '臺北';
   const LOCATION_NAME_FORECAST = '臺北市';
   const [currentTheme, setCurrentTheme] = useState('light');
-  const [weatherElement, setWeatherElement] = useState({
-    locationName: '',
-    description: '',
-    windSpeed: 0,
-    temperature: 0,
-    rainPossibility: 0,
-    weatherCode: 0,
-    comfortability: '',
-    observationTime: new Date(),
-    isLoading: true,
-  });
+  const [weatherElement, fetchWeatherData] = useWeatherAPI(AUTHORIZATION_KEY, LOCATION_NAME, LOCATION_NAME_FORECAST);
 
   // TODO: 等使用者可以修改地區時要修改裡面的參數
   const moment = useMemo(() => getMoment(LOCATION_NAME_FORECAST),[]);
@@ -56,91 +47,13 @@ function App() {
     setCurrentTheme(moment === 'day' ? 'light' : 'dark');
   }, [moment]);
 
-  const fetchCurrentWeather = () => {
-    // 加上 return 直接把 fetch API 回傳的 Promise 再回傳出去
-    return fetch(`https://opendata.cwb.gov.tw/api/v1/rest/datastore/O-A0003-001?Authorization=${AUTHORIZATION_KEY}&locationName=${LOCATION_NAME}`)
-      .then(response => response.json())
-      .then(data => { 
-        const locationData = data.records.location[0];
-        const weatherElements = locationData.weatherElement.reduce(
-          (preValue, currentValue) => {
-            if (['WDSD', 'TEMP'].includes(currentValue.elementName)) {
-              preValue[currentValue.elementName] = currentValue.elementValue;
-            }
-            return preValue;
-          }, 
-          {}
-        );
-        // console.log(data);
-        return {
-          observationTime: locationData.time.obsTime,
-          locationName: locationData.locationName,
-          windSpeed: weatherElements.WDSD, 
-          temperature: weatherElements.TEMP,
-        };
-      });
-  };
-
-  const fetchWeatherForecast = () => {
-    return fetch(`https://opendata.cwb.gov.tw/api/v1/rest/datastore/F-C0032-001?Authorization=${AUTHORIZATION_KEY}&locationName=${LOCATION_NAME_FORECAST}`)
-      .then(response => response.json())
-      .then(data => { 
-        // console.log(data);
-        const locationData = data.records.location[0];
-        const weatherElements = locationData.weatherElement.reduce(
-          (preValue, currentValue) => {
-            if (['Wx', 'PoP', 'CI'].includes(currentValue.elementName)) {
-              /** get nearest 12 hour data here */
-              preValue[currentValue.elementName] = currentValue.time[0].parameter;
-            }
-            return preValue;
-          }, 
-          {}
-        );
-        // console.log('weatherElements', weatherElements)
-        return {
-          description: weatherElements.Wx.parameterName, 
-          weatherCode: weatherElements.Wx.parameterValue,
-          rainPossibility: weatherElements.PoP.parameterName,
-          comfortability: weatherElements.CI.parameterName,
-        };
-      });
-  };
-
-  /** add useCallback to avoid every re-render redefine etchWeatherData */
-  const fetchWeatherData = useCallback(async () => {
-    setWeatherElement((prevState) => ({
-      ...prevState,
-      isLoading: true,
-    }));
-    const [ currentWeather, weatherForecast ] = await Promise.all([
-      fetchCurrentWeather(),
-      fetchWeatherForecast(),
-    ]);
-    setWeatherElement({
-      ...currentWeather,
-      ...weatherForecast,
-      isLoading: false,
-    });
-  }, []);
-
-  useEffect(() => {
-    // console.log('execute function in useEffect');
-    fetchWeatherData();
-  }, [fetchWeatherData]);
-
-  useEffect(() => {
-    // console.log('execute function in useEffect');
-    fetchWeatherData();
-  }, [fetchWeatherData]);
-
   return (
     <ThemeProvider theme={theme[currentTheme]}>
       {/* {console.log('render')} */}
       <Container>
-        <WeatherCard 
-          weatherElement={weatherElement}
+        <WeatherCard
           moment={moment}
+          weatherElement={weatherElement}
           fetchWeatherData={fetchWeatherData}
         />
       </Container>
