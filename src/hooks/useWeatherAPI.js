@@ -49,7 +49,7 @@ const fetchWeatherForecast = (authorizationKey, cityName) => {
         });
 };
 
-const useWeatherAPI = (authorizationKey, locationName, cityName) => {
+const useWeatherAPI = ({ authorizationKey, locationName, cityName }) => {
     const [weatherElement, setWeatherElement] = useState({
         locationName: '',
         description: '',
