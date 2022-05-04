@@ -4,6 +4,7 @@ import { ThemeProvider } from '@emotion/react';
 import { getMoment } from './utils/helpers.js'
 import useWeatherAPI from './hooks/useWeatherAPI';
 import WeatherCard from './views/WeatherCard.js';
+import WeatherSetting from './views/WeatherSetting.js';
 
 const theme = {
   light: {
@@ -38,6 +39,7 @@ function App() {
   const LOCATION_NAME = '臺北';
   const LOCATION_NAME_FORECAST = '臺北市';
   const [currentTheme, setCurrentTheme] = useState('light');
+  const [currentPage, setCurrentPage] = useState('WeatherCard');
   const [weatherElement, fetchWeatherData] = useWeatherAPI({
     authorizationKey: AUTHORIZATION_KEY, 
     locationName: LOCATION_NAME, 
@@ -46,7 +48,9 @@ function App() {
 
   // TODO: 等使用者可以修改地區時要修改裡面的參數
   const moment = useMemo(() => getMoment(LOCATION_NAME_FORECAST),[]);
-
+  const handleChangePage = (currentPage) => { 
+    setCurrentPage(currentPage) 
+  };
   useEffect(() => {
     setCurrentTheme(moment === 'day' ? 'light' : 'dark');
   }, [moment]);
@@ -55,11 +59,21 @@ function App() {
     <ThemeProvider theme={theme[currentTheme]}>
       {/* {console.log('render')} */}
       <Container>
-        <WeatherCard
-          moment={moment}
-          weatherElement={weatherElement}
-          fetchWeatherData={fetchWeatherData}
-        />
+        {currentPage === 'WeatherCard'
+          && (
+            <WeatherCard
+              moment={moment}
+              weatherElement={weatherElement}
+              fetchWeatherData={fetchWeatherData}
+              handleChangePage={handleChangePage}
+            />
+        )}
+        {currentPage === 'WeatherSetting'
+          && (
+          <WeatherSetting 
+            handleChangePage={handleChangePage}
+          />
+        )}
       </Container>
     </ThemeProvider>
   );
