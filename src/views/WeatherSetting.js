@@ -93,26 +93,41 @@ const Save = styled.button`
   }
 `;
 
-const WeatherSetting = ({handleChangePage}) => {
-    const handleClick = () => {
-        handleChangePage('WeatherCard');
-    }
-    return (
-        <WeatherSettingWrapper>
-            <Title>設定</Title>
-            <StyledLabel htmlFor="location">地區</StyledLabel>
-            <StyledSelect id="location" name="location">
-                {availableLocations.map(({ cityName }) => (
-                    <option value={cityName} key={cityName}>
-                        { cityName }
-                    </option>
-                ))}
-            </StyledSelect>
-            <ButtonGroup>
-                <Back onClick={handleClick}>返回</Back>
-                <Save onClick={handleClick}>儲存</Save>
-            </ButtonGroup>
-        </WeatherSettingWrapper>
-    );
+const WeatherSetting = ({ cityName, handleChangePage, handleChangeCurrentCity }) => {
+  const [locationName, setLocationName] = useState(cityName);  
+  const handleClick = () => {
+    handleChangePage('WeatherCard');
+  };
+  const handleChange = (e) => {
+    setLocationName(e.target.value);    
+  };
+  const handleSave = () => {
+    handleClick();
+    console.log('locationName', locationName)
+    handleChangeCurrentCity(locationName);
+    localStorage.setItem('cityName', locationName);
+  };
+  return (
+      <WeatherSettingWrapper>
+          <Title>設定</Title>
+          <StyledLabel htmlFor="location">地區</StyledLabel>
+          <StyledSelect 
+            id="location" 
+            name="location"
+            value={locationName}
+            onChange={handleChange}
+          >
+            {availableLocations.map(({ cityName }) => (
+                <option value={cityName} key={cityName}>
+                    { cityName }
+                </option>
+            ))}
+          </StyledSelect>
+          <ButtonGroup>
+              <Back onClick={handleClick}>返回</Back>
+              <Save onClick={handleSave}>儲存</Save>
+          </ButtonGroup>
+      </WeatherSettingWrapper>
+  );
 };
 export default WeatherSetting;

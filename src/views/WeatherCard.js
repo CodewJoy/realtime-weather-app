@@ -103,13 +103,13 @@ const Refresh = styled.div`
   }
 `;
 
-const WeatherCard = ({ weatherElement, moment, fetchWeatherData,  handleChangePage}) => {
+const WeatherCard = ({ cityName, weatherElement, moment, fetchWeatherData,  handleChangePage}) => {
     const { 
         locationName, description, temperature, windSpeed, rainPossibility, isLoading, observationTime, comfortability, weatherCode,
     } = weatherElement;
     return (
         <Wrapper>
-            <Location>{locationName}</Location>
+            <Location>{cityName}</Location>
             <Description>{description} {comfortability}</Description>
             <Cog onClick={() => handleChangePage('WeatherSetting')}/>
             <CurrentWeather>
