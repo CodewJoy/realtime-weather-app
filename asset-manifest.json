@@ -1,19 +1,19 @@
 {
   "files": {
     "main.css": "/realtime-weather-app/static/css/main.a81f5527.chunk.css",
-    "main.js": "/realtime-weather-app/static/js/main.106c0d57.chunk.js",
-    "main.js.map": "/realtime-weather-app/static/js/main.106c0d57.chunk.js.map",
-    "runtime-main.js": "/realtime-weather-app/static/js/runtime-main.8bad77dd.js",
-    "runtime-main.js.map": "/realtime-weather-app/static/js/runtime-main.8bad77dd.js.map",
+    "main.js": "/realtime-weather-app/static/js/main.f714bf53.chunk.js",
+    "main.js.map": "/realtime-weather-app/static/js/main.f714bf53.chunk.js.map",
+    "runtime-main.js": "/realtime-weather-app/static/js/runtime-main.2419812a.js",
+    "runtime-main.js.map": "/realtime-weather-app/static/js/runtime-main.2419812a.js.map",
     "static/css/2.679831fc.chunk.css": "/realtime-weather-app/static/css/2.679831fc.chunk.css",
-    "static/js/2.41aa4787.chunk.js": "/realtime-weather-app/static/js/2.41aa4787.chunk.js",
-    "static/js/2.41aa4787.chunk.js.map": "/realtime-weather-app/static/js/2.41aa4787.chunk.js.map",
-    "static/js/3.653bd2bb.chunk.js": "/realtime-weather-app/static/js/3.653bd2bb.chunk.js",
-    "static/js/3.653bd2bb.chunk.js.map": "/realtime-weather-app/static/js/3.653bd2bb.chunk.js.map",
+    "static/js/2.496de4ad.chunk.js": "/realtime-weather-app/static/js/2.496de4ad.chunk.js",
+    "static/js/2.496de4ad.chunk.js.map": "/realtime-weather-app/static/js/2.496de4ad.chunk.js.map",
+    "static/js/3.340071d4.chunk.js": "/realtime-weather-app/static/js/3.340071d4.chunk.js",
+    "static/js/3.340071d4.chunk.js.map": "/realtime-weather-app/static/js/3.340071d4.chunk.js.map",
     "index.html": "/realtime-weather-app/index.html",
     "static/css/2.679831fc.chunk.css.map": "/realtime-weather-app/static/css/2.679831fc.chunk.css.map",
     "static/css/main.a81f5527.chunk.css.map": "/realtime-weather-app/static/css/main.a81f5527.chunk.css.map",
-    "static/js/2.41aa4787.chunk.js.LICENSE.txt": "/realtime-weather-app/static/js/2.41aa4787.chunk.js.LICENSE.txt",
+    "static/js/2.496de4ad.chunk.js.LICENSE.txt": "/realtime-weather-app/static/js/2.496de4ad.chunk.js.LICENSE.txt",
     "static/media/airFlow.93b49bb5.svg": "/realtime-weather-app/static/media/airFlow.93b49bb5.svg",
     "static/media/cog.64eda1d3.svg": "/realtime-weather-app/static/media/cog.64eda1d3.svg",
     "static/media/day-clear.8857a9c1.svg": "/realtime-weather-app/static/media/day-clear.8857a9c1.svg",
@@ -35,10 +35,10 @@
     "static/media/refresh.e352fc8b.svg": "/realtime-weather-app/static/media/refresh.e352fc8b.svg"
   },
   "entrypoints": [
-    "static/js/runtime-main.8bad77dd.js",
+    "static/js/runtime-main.2419812a.js",
     "static/css/2.679831fc.chunk.css",
-    "static/js/2.41aa4787.chunk.js",
+    "static/js/2.496de4ad.chunk.js",
     "static/css/main.a81f5527.chunk.css",
-    "static/js/main.106c0d57.chunk.js"
+    "static/js/main.f714bf53.chunk.js"
   ]
 }
