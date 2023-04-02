@@ -6,6 +6,7 @@ const fetchCurrentWeather = (authorizationKey, locationName) => {
         .then(response => response.json())
         .then(data => {
             const locationData = data.records.location[0];
+            if (!locationData) return;
             const weatherElements = locationData.weatherElement.reduce(
                 (preValue, currentValue) => {
                     if (['WDSD', 'TEMP'].includes(currentValue.elementName)) {

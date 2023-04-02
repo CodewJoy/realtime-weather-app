@@ -105,7 +105,7 @@ const Refresh = styled.div`
 
 const WeatherCard = ({ cityName, weatherElement, moment, fetchWeatherData,  handleChangePage}) => {
     const { 
-        locationName, description, temperature, windSpeed, rainPossibility, isLoading, observationTime, comfortability, weatherCode,
+      description, temperature, windSpeed, rainPossibility, isLoading, observationTime, comfortability, weatherCode,
     } = weatherElement;
     return (
         <Wrapper>
@@ -114,7 +114,14 @@ const WeatherCard = ({ cityName, weatherElement, moment, fetchWeatherData,  hand
             <Cog onClick={() => handleChangePage('WeatherSetting')}/>
             <CurrentWeather>
                 <Temperature>
-                    {Math.round(temperature)} <Celsius>°C</Celsius>
+                  {temperature ? (
+                    <>
+                      {Math.round(temperature)}
+                      <Celsius>°C</Celsius>
+                    </>
+                  ) : (
+                    <Celsius>N/A</Celsius>
+                  )}
                 </Temperature>
                 <WeatherIcon moment={moment} weatherCode={weatherCode} />
             </CurrentWeather>

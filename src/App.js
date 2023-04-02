@@ -33,15 +33,14 @@ const Container = styled.div`
   justify-content: center;
 `;
 
+const AUTHORIZATION_KEY = process.env.REACT_APP_API_AUTHORIZATION_KEY;
 function App() {
   // console.log('invoke function component'); // 元件一開始加入 console.log
-  const AUTHORIZATION_KEY = 'CWB-2C30CA15-2F4E-411C-B3AA-903787A0539F';
   const storageCity = localStorage.getItem('cityName') || '臺北市';
   const [currentCity, setCurrentCity] = useState(storageCity);  
   const [currentTheme, setCurrentTheme] = useState('light');
   const [currentPage, setCurrentPage] = useState('WeatherCard');
   const location = useMemo(() => findLocation(currentCity), [currentCity]);
-  // console.log('location', location)
   const { cityName, locationName, sunriseCityName } = location; 
   const [weatherElement, fetchWeatherData] = useWeatherAPI({
     authorizationKey: AUTHORIZATION_KEY, 
