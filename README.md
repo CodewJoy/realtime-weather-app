@@ -1,5 +1,6 @@
 # Realtime Weather App
 [Demo Link](https://codewjoy.github.io/realtime-weather-app/)
+![](https://i.imgur.com/lgFxBhZ.gif)
 
 #### Technologies
 * React Hooks
